@@ -46,7 +46,7 @@
     "href": "index.html",
     "title": "My Blog",
     "section": "",
-    "text": "使用paletteer\n\n\n\n\n\n\ndataviz\n\n\n\n\n\n\n\n\n\nMay 16, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n分面图的因子变量排序\n\n\n\n\n\n\nR\n\n\ntext data\n\n\n\n\n\n\n\n\n\nApr 15, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n从pdf读取表格\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 10, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n实现简单线性回归\n\n\n\n\n\n\nR\n\n\neconometrics\n\n\n\n\n\n\n\n\n\nApr 9, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n四人追逐游戏\n\n\n\n\n\n\nR\n\n\ncoding\n\n\n\n\n\n\n\n\n\nMar 10, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n构造感知机模型\n\n\n\n\n\n\nR\n\n\nML\n\n\n\n\n\n\n\n\n\nMar 5, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n人口数据\n\n\n\n\n\n\nR\n\n\ndata analysis\n\n\n\n\n\n\n\n\n\nFeb 29, 2024\n\n\nBowen Qin\n\n\n\n\n\n\nNo matching items"
+    "text": "分面图的因子变量排序\n\n\n\n\n\n\nR\n\n\ntext data\n\n\n\n\n\n\n\n\n\nApr 15, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n从pdf读取表格\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 10, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n实现简单线性回归\n\n\n\n\n\n\nR\n\n\neconometrics\n\n\n\n\n\n\n\n\n\nApr 9, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n四人追逐游戏\n\n\n\n\n\n\nR\n\n\ncoding\n\n\n\n\n\n\n\n\n\nMar 10, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n构造感知机模型\n\n\n\n\n\n\nR\n\n\nML\n\n\n\n\n\n\n\n\n\nMar 5, 2024\n\n\nBowen Qin\n\n\n\n\n\n\n\n\n\n\n\n\n人口数据\n\n\n\n\n\n\nR\n\n\ndata analysis\n\n\n\n\n\n\n\n\n\nFeb 29, 2024\n\n\nBowen Qin\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -138,27 +138,6 @@
     "title": "四人追逐游戏",
     "section": "",
     "text": "游戏的设定是四个人A，B，C，D站在四个角，A追B，B追C，C追D，D追A。高数里面好像经常有类似的题目，今天用代码来模拟一下。\n\nlibrary(tidyverse)\n\n\ndt_list &lt;- list(\n  tibble(\n    name = c(\"A\", \"B\", \"C\", \"D\"),\n    x = c(1, 1, -1, -1),\n    y = c(1, -1, -1, 1),\n    direction = c(2, 3, 4, 1),\n    n = 0\n  )\n)\n\n生成一个tibble，其中\n\nname列表示四个人的名字。\nx、y是坐标。\ndirection列表示追逐的人的行号，比如A追B，B在第二行，所以A对应的direction是2。\nn表示跑了几步，目前没有开始追，所以是0步。\n\n\n# 设置程序最多跑5000步，防止程序出错而不收敛\nN &lt;- 5000   \n# 设置每一步的步长\nstep_length &lt;- 0.01\n\n# 开始循环\nfor (i in 1:N) {\n  dt = dt_list[[i]]\n  x_diff = max(dt$x) - min(dt$x)\n  y_diff = max(dt$y) - min(dt$y)\n  # 因为x,y是浮点数，最终可能每个点的x,y都十分接近但不相等，因此用near()来判断\n  if (!all(near(c(x_diff, y_diff), 0))) {\n    dt_list[[i + 1]] &lt;- dt %&gt;% \n      # 每个人向所追的方向迈一步\n      mutate(x_d = as_vector(dt[direction, \"x\"] - x),\n             y_d = as_vector(dt[direction, \"y\"] - y),\n             x = x + x_d * step_length,\n             y = y + y_d * step_length,\n             n = i)\n  } else {\n    break\n  }\n}\n\n整理一下结果\n\ndt &lt;- do.call(bind_rows, dt_list)\ndt\n\n# A tibble: 7,572 × 7\n   name       x      y direction     n     x_d     y_d\n   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;\n 1 A      1      1             2     0 NA      NA     \n 2 B      1     -1             3     0 NA      NA     \n 3 C     -1     -1             4     0 NA      NA     \n 4 D     -1      1             1     0 NA      NA     \n 5 A      1      0.98          2     1  0      -2     \n 6 B      0.98  -1             3     1 -2       0     \n 7 C     -1     -0.98          4     1  0       2     \n 8 D     -0.98   1             1     1  2       0     \n 9 A      1.00   0.960         2     2 -0.0200 -1.98  \n10 B      0.960 -1.00          3     2 -1.98    0.0200\n# ℹ 7,562 more rows\n\n\n\ndt %&gt;% \n  slice_max(n)\n\n# A tibble: 4 × 7\n  name         x        y direction     n      x_d      y_d\n  &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;\n1 A      7.44e-9  4.30e-9         2  1892 -3.05e-9 -1.19e-8\n2 B      4.30e-9 -7.44e-9         3  1892 -1.19e-8  3.05e-9\n3 C     -7.44e-9 -4.30e-9         4  1892  3.05e-9  1.19e-8\n4 D     -4.30e-9  7.44e-9         1  1892  1.19e-8 -3.05e-9\n\n\n达到收敛的状态花了1892步，即在步长为0.01时，1892步后四人追到彼此。\n看下四个人的轨迹\n\ndt %&gt;% \n  ggplot(aes(x, y, color = n, pch = name)) +\n  geom_point(alpha = 0.2, size = 3) +\n  geom_text(data = dt_list[[1]],\n            aes(x, y, label = name),\n            nudge_x = 0.1,\n            nudge_y = 0.1) +\n  coord_equal() +\n  scale_color_viridis_c(option = \"C\", end = 0.8, begin = 0.4) +\n  theme_minimal()"
-  },
-  {
-    "objectID": "posts/paletteer.html",
-    "href": "posts/paletteer.html",
-    "title": "使用paletteer",
-    "section": "",
-    "text": "library(tidyverse)\nlibrary(paletteer)\ntheme_set(hrbrthemes::theme_ipsum_rc())\nThe palettes are divided into 2 groups; discrete and continuous. For discrete palette you have the choice between the fixed width palettes and dynamic palettes.\nThis package includes 2759 palettes from 75 different packages and information about these can be found in the following data.frames: palettes_c_names, palettes_d_names and palettes_dynamic_names. Additionally this github repo showcases all the palettes included in the package and more.\npalettes_c_names\n\n# A tibble: 319 × 3\n   package  palette               type      \n   &lt;chr&gt;    &lt;chr&gt;                 &lt;chr&gt;     \n 1 ggthemes Blue-Green Sequential sequential\n 2 ggthemes Blue Light            sequential\n 3 ggthemes Orange Light          sequential\n 4 ggthemes Blue                  sequential\n 5 ggthemes Orange                sequential\n 6 ggthemes Green                 sequential\n 7 ggthemes Red                   sequential\n 8 ggthemes Purple                sequential\n 9 ggthemes Brown                 sequential\n10 ggthemes Gray                  sequential\n# ℹ 309 more rows\npalettes_d_names\n\n# A tibble: 2,415 × 5\n   package   palette   length type        novelty\n   &lt;chr&gt;     &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;       &lt;lgl&gt;  \n 1 awtools   a_palette      8 sequential  TRUE   \n 2 awtools   ppalette       8 qualitative TRUE   \n 3 awtools   bpalette      16 qualitative TRUE   \n 4 awtools   gpalette       4 sequential  TRUE   \n 5 awtools   mpalette       9 qualitative TRUE   \n 6 awtools   spalette       6 qualitative TRUE   \n 7 basetheme brutal        10 qualitative TRUE   \n 8 basetheme clean         10 qualitative TRUE   \n 9 basetheme dark          10 qualitative TRUE   \n10 basetheme deepblue      10 qualitative TRUE   \n# ℹ 2,405 more rows"
-  },
-  {
-    "objectID": "posts/paletteer.html#examples",
-    "href": "posts/paletteer.html#examples",
-    "title": "使用paletteer",
-    "section": "1 Examples",
-    "text": "1 Examples\nAll the palettes can be accessed from the 3 functions paletteer_c(), paletteer_d() and paletteer_dynamic() using the by using the syntax packagename::palettename.\n\npaletteer_d(`\"awtools::a_palette\"`)\n\n&lt;colors&gt;\n#2A363BFF #019875FF #99B898FF #FECEA8FF #FF847CFF #E84A5FFF #C0392BFF #96281BFF \n\n\n\npaletteer_dynamic(`\"cartography::blue.pal\"`, n = 4)\n\n&lt;colors&gt;\n#9AD3EBFF #6AACCCFF #2F7CA6FF #125A84FF"
-  },
-  {
-    "objectID": "posts/paletteer.html#ggplot2-scales",
-    "href": "posts/paletteer.html#ggplot2-scales",
-    "title": "使用paletteer",
-    "section": "2 ggplot2 scales",
-    "text": "2 ggplot2 scales\n\niris %&gt;% \n  ggplot(aes(Sepal.Length, Sepal.Width, color = Species)) +\n  geom_point(size = 2.5) +\n  scale_color_paletteer_d(`\"ButterflyColors::astraptes_fulgerator\"`)"
   },
   {
     "objectID": "posts/从pdf读取表格/从pdf读取表格.html",

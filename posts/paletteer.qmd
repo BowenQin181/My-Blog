@@ -1,5 +1,6 @@
 ---
 title: 使用paletteer
+draft: true
 categories: [dataviz]
 date: "2024-05-16"
 date-modified: "`r Sys.Date()`"
