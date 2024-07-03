@@ -1,0 +1,163 @@
+---
+title: 4×4 数独的全部解
+category: R
+date: "2024-05-16"
+date-modified: "`r Sys.Date()`"
+draft: true
+---
+
+将0~15填入16宫格中，每行、每列、每条对角线以及每相邻4个数之和都是30
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(arrangements)
+```
+
+# 思路
+
+找出0~15的所有排列方式，计算他们是不是符合要求即可。
+
+但是，0~15的排列方式大约有$2 \times 10^{13}$种，快速地找出所有排列，筛选符合要求的排列很难。
+
+```{r}
+factorial(16)
+```
+
+先填一半，筛选出符合条件的，
+
+再填后一半，筛选出符合条件的
+
+两半合并
+
+甚至只填出一半就够了
+
+
+
+## 前半段
+
+```{r}
+first_half_comb <- combinations(0:15, 8)
+head(first_half_comb)
+```
+
+```{r}
+perm_mat <- first_half_comb[1, ] %>% 
+  permutations()
+```
+
+
+
+```{r}
+perm_mat %>% head()
+```
+
+
+```{r}
+row_sum <- rowSums(perm_mat)
+col_sum <- colSums(perm_mat)
+```
+
+
+
+### test before perm
+
+要求全部元素之和等于60
+
+```{r}
+first_half_comb <- first_half_comb[rowSums(first_half_comb) == 60, ]
+```
+
+
+
+### 得到排列
+
+```{r}
+get_perm_mat <- function(comb_mats, row_id) {
+  permutations(v = comb_mats[row_id, ])
+}
+
+get_perm_mat(first_half_comb, 1) %>% 
+  head()
+```
+
+### 判断排列是否符合要求
+
+最终填入时，按行填入2×4的矩阵，比如
+
+```{r}
+get_perm_mat(first_half_comb, 1)[1, ]
+```
+
+变成
+
+```{r}
+get_perm_mat(first_half_comb, 1)[1, ] %>% 
+  matrix(nrow = 2, ncol = 4, byrow = TRUE)
+```
+
+这要求每一行的和都是30，又8个数之和是60，所以只需要第一行的和是30。相邻两列的和也是30，只需1、2列的和与2、3列的和都是30。
+
+
+
+
+```{r}
+get_sat_perm <- function(perm_mat) {
+  sum_row_1 <- rowSums(perm_mat[, 1:4]) == 30
+  sum_col_1_2 <- rowSums(perm_mat[, c(1, 2, 5, 6)]) == 30
+  sum_col_2_3 <- rowSums(perm_mat[, c(2, 3, 6, 7)]) == 30
+  test_res <- rowSums(cbind(sum_row_1, sum_col_1_2, sum_col_2_3)) == 3
+  if (all(test_res == FALSE)) {
+    return(NULL)
+  } else {
+    res <- list("perms" = perm_mat[test_res, ],      # 符合要求的排列
+                "comb" = perm_mat[1, ],              # 排列所对应的组合
+                "diff" = setdiff(x = 0:15, y = perm_mat[1, ]))  # 可以用来填后一半的数
+    return(res)
+  }
+}
+
+get_perm_mat(first_half_comb, 1) %>% 
+  get_sat_perm() %>% 
+  str()
+```
+
+
+```{r}
+first_half_res <- map(1:nrow(first_half_comb),
+           \(x) get_sat_perm(get_perm_mat(first_half_comb, x)))
+```
+
+
+```{r}
+first_half_res <- first_half_res[!map_lgl(first_half_res, is.null)]
+first_half_res %>% length()
+
+str(first_half_res[[1]])
+```
+
+虽然从0~15里取八个数有12870种取法，但是符合要求的取法只有`r length(first_half_res)`种，已经极大减少了。不过每种取法还有很多种排列。
+
+## 下一步
+
+思索数据结构
+
+```{r}
+class(first_half_res[[1]]$comb)
+```
+
+
+```{r}
+df <- tibble(first_half_res) %>% 
+  unnest_wider(col = first_half_res) 
+df
+```
+
+```{r}
+ddd <- df %>% 
+  left_join(df, by = join_by(comb == diff)) %>% 
+  drop_na()
+```
+

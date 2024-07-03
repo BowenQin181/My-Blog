@@ -1,0 +1,24 @@
+# options specified here will apply to all posts in this folder
+
+# freeze computational output
+# (see https://quarto.org/docs/projects/code-execution.html#freeze)
+freeze: true
+
+# Enable banner style title blocks
+title-block-banner: true
+knitr: 
+  opts_chunk: 
+    dev: "ragg_png"
+    out.weidth: "80%"
+    fig.align: "center"
+fig-asp: 0.66
+toc: true
+toc-depth: 3
+df-print: tibble
+number-sections: true
+code-tools: true
+    
+author: "Bowen Qin"
+mainfont: "STFangsong"
+monofont: "Cascadia Code"
+dpi: 400

@@ -1,0 +1,357 @@
+---
+title: 实现简单线性回归
+categories: [R, econometrics]
+date: "2024-04-09"
+date-modified: "`r Sys.Date()`"
+number-depth: 2
+toc-depth: 3
+---
+
+```{r}
+#| message: false
+#| label: setup
+
+library(tidyverse)
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+
+准备花几期时间，自己写代码，实现常用的计量方法。
+
+生成模拟数据
+
+```{r}
+set.seed(111)
+x <- 1:4
+names(x) <- LETTERS[1:4]
+df <- tibble(
+  x1 = runif(1000, -10, 10),
+  x2 = sample(1:20, 1000, replace = TRUE),
+  x3 = sample(LETTERS[1:4], 1000, replace = TRUE),
+  error = rnorm(1000, sd = 1000),
+  y = 1 + 2 * x1 + 3 * x2 + x[x3]
+)
+df
+```
+
+# 步骤拆解
+
+### step 1: 根据formula生成矩阵
+
+因为`formula`是R里面一个特殊的`class`，他的具体机制我没弄清楚，所以这一步用R中的`model.matrix.lm()`实现
+
+```{r}
+formula <- y ~ x1 + x2 + x3
+df_model <- model.frame(formula, df)
+X <- model.matrix.lm(df_model)
+head(X)
+Y <- model.response(df_model)
+head(Y)
+```
+
+### step 2: 得到回归系数
+
+假设对于总体数据来说：
+
+$$
+\mathbf Y = \mathbf X \boldsymbol \beta + \boldsymbol \epsilon
+$$
+
+
+但是我们得到的拟合方程是：
+
+$$
+\hat{\mathbf Y} = \mathbf X \hat{\boldsymbol \beta}
+$$
+
+
+
+
+且
+
+$$
+\begin{align}
+\boldsymbol e &= \mathbf Y - \hat{\mathbf Y} \\
+&= \mathbf Y - \mathbf X \hat{\boldsymbol \beta}
+\end{align}
+$$
+
+要想使$\mathbf Y - \hat{\mathbf Y}$最小，则$\boldsymbol e$与$\mathbf X$正交，即
+
+
+$$
+\begin{align}
+&\mathbf {X^T (Y - X\hat{\beta})} = \mathbf {0} \\
+&\mathbf {\hat{\beta}} = \mathbf {(X^T X)^{-1}X^{T} Y} 
+\end{align}
+$$
+
+
+```{r}
+get_beta <- function(X, Y) {
+  solve(crossprod(X, X)) %*% crossprod(X, Y)
+}
+beta <- get_beta(X, Y)
+beta
+```
+
+### step 3: 求出拟合值和误差
+
+$$
+\begin{align}
+\mathbf{\hat{Y}} &= \mathbf{X\hat{\beta}} \\
+\mathbf{e} &= \mathbf{ Y - \hat{Y}}
+\end{align}
+$$
+
+```{r}
+get_fit <- function(X, beta) {
+  X %*% beta
+}
+
+Y_hat <- get_fit(X, beta)
+head(Y_hat)
+```
+
+```{r}
+get_residual <- function(Y, Y_hat) {
+  Y - Y_hat
+}
+residual <- get_residual(Y, Y_hat)
+head(residual)
+```
+
+### step 4: 求出系数的标准误
+
+感觉这一部分的可拓展性比较强，在不同的假设下（同方差、异方差等），系数的标准误不同。这次先假设同方差且无自相关（球形扰动项）。
+
+求一下自由度
+
+```{r}
+get_freedom <- function(X) {
+  nrow(X) - ncol(X)
+}
+freedom <- get_freedom(X)
+freedom
+```
+
+```{r}
+get_var_sepherical <- function(residual, freedom) {
+  as.numeric(crossprod(residual, residual) / freedom)
+}
+residual_var <- get_var_sepherical(residual, freedom)
+residual_var
+```
+
+球形扰动项假设下，系数的标准误为
+
+$$
+\mathbf {\text{SE}(\hat{\beta})} = \mathbf {\sqrt {\text{Var}(e) (X^T X)^{-1}_{kk}}}
+$$
+
+
+```{r}
+get_beta_se <- function(X, residual_var) {
+  sqrt(residual_var * diag(solve(crossprod(X, X))))
+}
+beta_se <- get_beta_se(X, residual_var)
+beta_se
+```
+
+### step 5: 系数的t值和p值
+
+计算系数的t值
+
+$$
+t_k = \frac{\hat{\beta_k} - \beta_k}{ \text{SE}(\hat{ \beta_k}) }
+$$
+
+```{r}
+get_beta_t <- function(beta, beta_se, assump = 0) {
+  (beta - assump) / beta_se
+}
+beta_t <- get_beta_t(beta, beta_se)
+beta_t
+```
+
+置信区间
+
+$$
+[\hat{\beta_k} - t_{\frac{\alpha}{2}} \text{SE}(\hat{ \beta_k}),  
+\hat{\beta_k} + t_{\frac{\alpha}{2}} \text{SE}(\hat{ \beta_k})]
+$$
+
+
+```{r}
+get_conf <- function(beta, beta_se, freedom, p = 0.05) {
+  beta_lconf <- beta + qt(p/2, freedom) * beta_se
+  beta_hconf <- beta - qt(p/2, freedom) * beta_se
+  cbind(beta_lconf, beta_hconf)
+}
+
+conf <- get_conf(beta, beta_se, freedom)
+conf
+```
+
+
+系数的p-value
+
+$$
+p = P(|T| > |t_k|)
+$$
+
+```{r}
+get_pvalue <- function(beta_t, freedom) {
+  2 * pt(abs(beta_t), df = freedom, lower.tail = FALSE)
+}
+pvalue <- get_pvalue(beta_t, freedom)
+pvalue
+```
+
+
+### step 6: 整理结果
+
+```{r}
+result_df <- as_tibble(beta, rownames = "term") %>% 
+  rename(estimate = V1) %>% 
+  bind_cols(std_error = beta_se,
+            statistics = beta_t[, 1],
+            p_value = pvalue[, 1])
+```
+
+
+# 打包成一个函数
+
+前面编写的函数有
+
+```{r}
+get_beta <- function(X, Y) {
+  solve(crossprod(X, X)) %*% crossprod(X, Y)
+}
+
+get_fit <- function(X, beta) {
+  X %*% beta
+}
+
+get_residual <- function(Y, Y_hat) {
+  Y - Y_hat
+}
+
+get_freedom <- function(X) {
+  nrow(X) - ncol(X)
+}
+
+get_var_sepherical <- function(residual, freedom) {
+  as.numeric(crossprod(residual, residual) / freedom)
+}
+
+get_beta_se <- function(X, residual) {
+  sqrt(residual * diag(solve(crossprod(X, X))))
+}
+
+get_beta_t <- function(beta, beta_se, assump = 0) {
+  (beta - assump) / beta_se
+}
+
+get_conf <- function(beta, beta_se, freedom, p = 0.05) {
+  beta_lconf <- beta + qt(p/2, freedom) * beta_se
+  beta_hconf <- beta - qt(p/2, freedom) * beta_se
+  cbind(beta_lconf, beta_hconf)
+}
+
+get_pvalue <- function(beta_t, freedom) {
+  2 * pt(abs(beta_t), df = freedom, lower.tail = FALSE)
+}
+
+
+```
+
+将这些函数作为积木拼入一个大函数中
+
+```{r}
+my_lm <- function(formula, df) {
+  df_model <- model.frame(formula, df)
+  X <- model.matrix.lm(df_model)
+  Y <- model.response(df_model)
+  
+  beta <- get_beta(X, Y)
+  
+  Y_hat <- get_fit(X, beta)
+  residual <- get_residual(Y, Y_hat)
+  
+  freedom <- get_freedom(X)
+  residual_var <- get_var_sepherical(residual, freedom)
+  
+  beta_se <- get_beta_se(X, residual_var)
+  
+  beta_t <- get_beta_t(beta, beta_se)
+  #conf <- get_conf(beta, beta_se, freedom)
+  pvalue <- get_pvalue(beta_t, freedom)
+  
+  
+  result_df <- as_tibble(beta,rownames = "term") %>% 
+    rename(estimate = V1) %>% 
+    bind_cols(std_error = beta_se,
+              statistics = beta_t[, 1],
+              p_value = pvalue[, 1])
+  
+  return(result_df)
+}
+```
+
+
+```{r}
+my_result <- my_lm(y ~ x1 + x2 + x3, df = df)
+my_result
+```
+
+# 和`lm()`的结果对比
+
+```{r}
+lm_result <- lm(y ~ x1 + x2 + x3, df) %>% 
+  broom::tidy()
+lm_result
+```
+
+结果看起来不对，但其实是浮点数的数字存储机制造成的，比如
+
+```{r}
+sqrt(2) ^ 2 == 2
+```
+
+这时应该使用`near()`来判断两个数是否相等
+
+```{r}
+near(sqrt(2) ^ 2, 2)
+```
+
+```{r}
+near(my_result$std_error, lm_result$std.error)
+```
+
+
+```{r}
+near(my_result$statistics, lm_result$statistic)
+```
+
+最终得到的t值不同，原因还不清楚。
+
+# 使用真实的数据集
+
+
+
+```{r}
+mtcars
+```
+
+```{r}
+my_lm(mpg ~ ., mtcars)
+```
+
+```{r}
+lm(mpg ~ ., mtcars) %>% 
+  broom::tidy()
+```
+
+这次得到的结果又完全一样。前面t值不同的原因比较复杂，可能是函数运算机制不同。
+

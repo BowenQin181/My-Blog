@@ -1,0 +1,123 @@
+---
+title: 分面图的因子变量排序
+date: "2024-04-15"
+categories: [R, text data]
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(tidytext)
+theme_set(hrbrthemes::theme_ipsum_rc())
+update_geom_defaults("pointrange", new = list(size = 1.2, linewidth = 1.5))
+```
+
+一般在绘制条形图或克里夫兰点图时，会按照柱子或点的高低对变量进行排序，以使图形更加整洁美观。
+
+例如：
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - 排序前
+#|   - 排序后
+pop_data <- population %>% 
+  filter(year == 1995) %>% 
+  slice_head(n = 10)
+
+
+pop_data %>% 
+  ggplot(aes(country, population)) +
+  geom_pointrange(aes(ymin = 0, ymax = population)) +
+  scale_y_continuous(labels = scales::label_comma()) +
+  coord_flip() 
+
+
+pop_data %>% 
+  mutate(country = fct_reorder(country, population)) %>% 
+  ggplot(aes(country, population)) +
+  geom_pointrange(aes(ymin = 0, ymax = population)) +
+  scale_y_continuous(labels = scales::label_comma()) +
+  coord_flip()
+```
+
+上面的排序是借助`fct_reorder()`函数实现的。然而,在处理文本数据并绘制分面图时,我发现这种方法会出现问题。
+
+
+
+```{r}
+exm_data <- tibble(
+  x = rep(LETTERS[1:5], 2),
+  y = sample(1:10),
+  z = c(rep("group1", 5), rep("group2", 5))
+)
+
+exm_data
+```
+
+```{r}
+exm_data %>% 
+  group_by(z) %>% 
+  mutate(x = fct_reorder(x, y)) %>% 
+  ggplot(aes(x, y, color = z)) +
+  geom_pointrange(aes(ymin = 0, ymax = y), show.legend = FALSE) +
+  facet_wrap(~ z, nrow = 1, scales = "free") +
+  coord_flip() +
+  scale_color_brewer(palette = "Dark2")
+```
+
+可以看出，group1组别中的排序是正确的，group2组中的排序却是混乱的。虽然在`fct_reorder()`前使用了`group_by()`，但是变量`x`并没有真正在两个组内分别排序。这是因为group1和group2的数据同处于同一个数据框内，作为因子变量的`x`不能同时有两种排序方式。
+
+举个例子，我们按照不同的排序生成两组因子变量，然后将它们合并为一列
+
+```{r}
+#| layout-ncol: 2
+dt_a <- tibble(fct_var = factor(c("A", "B", "C", "D"), levels = c("A", "B", "C", "D")),
+               id = "a")
+dt_b <- tibble(fct_var = factor(c("A", "B", "C", "D"), levels = c("D", "C", "B", "A")),
+               id = "b")
+
+dt_bind <- bind_rows(dt_a, dt_b)
+dt_bind
+```
+
+但此时因子变量`fct_var`只有一种排序方式。
+
+```{r}
+levels(dt_bind$fct_var)
+```
+
+因此，在绘制分面图形时，不能用`fct_reorder()`来调整因子变量的排序。
+
+幸运的是，`tidytext`包的`reorder_within()`和`scale_*_reordered()`可以解决这个问题。
+
+```{r}
+exm_data %>% 
+  mutate(x = reorder_within(x, by = y, within = z)) %>% 
+  ggplot(aes(x, y, color = z)) +
+  geom_pointrange(aes(ymin = 0, ymax = y), show.legend = FALSE) +
+  facet_wrap(~ z, scales = "free_y") +
+  scale_x_reordered() +
+  coord_flip() +
+  scale_color_brewer(palette = "Dark2")
+```
+
+这个方法的本质是先将因子变量和用于分面的变量合并成一个新的因子变量，再对这个新的因子变量进行排序。
+
+```{r}
+exm_data %>% 
+  mutate(x = reorder_within(x, by = y, within = z))
+```
+
+相当于
+
+```{r}
+exm_data %>% 
+  mutate(x = str_c(x, z, sep = "__"),
+         x = fct_reorder(x, y))
+```
+
+
+总之,在绘制包含分面的图形时,如果需要对不同分面内的因子变量进行排序,可以使用`tidytext`包提供的`reorder_within()`和`scale_*_reordered()`函数,它们可以帮助我们轻松实现分组内的因子变量排序。

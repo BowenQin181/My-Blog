@@ -1,0 +1,48 @@
+---
+title: 使用paletteer
+categories: [dataviz]
+date: "2024-05-16"
+date-modified: "`r Sys.Date()`"
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(paletteer)
+theme_set(hrbrthemes::theme_ipsum_rc())
+```
+
+The palettes are divided into 2 groups; discrete and continuous. For discrete palette you have the choice between the fixed width palettes and dynamic palettes.
+
+This package includes 2759 palettes from 75 different packages and information about these can be found in the following data.frames: `palettes_c_names`, `palettes_d_names` and `palettes_dynamic_names`. Additionally this [github repo](https://github.com/EmilHvitfeldt/r-color-palettes) showcases all the palettes included in the package and more.
+
+```{r}
+palettes_c_names
+```
+
+```{r}
+palettes_d_names
+```
+
+## Examples
+
+All the palettes can be accessed from the 3 functions `paletteer_c()`, `paletteer_d()` and `paletteer_dynamic()` using the by using the syntax packagename::palettename.
+
+```{r}
+paletteer_d(`"awtools::a_palette"`)
+```
+
+```{r}
+paletteer_dynamic(`"cartography::blue.pal"`, n = 4)
+```
+
+## ggplot2 scales
+
+```{r}
+iris %>% 
+  ggplot(aes(Sepal.Length, Sepal.Width, color = Species)) +
+  geom_point(size = 2.5) +
+  scale_color_paletteer_d(`"ButterflyColors::astraptes_fulgerator"`)
+```

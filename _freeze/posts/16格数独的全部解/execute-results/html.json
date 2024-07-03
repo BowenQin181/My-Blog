@@ -1,0 +1,14 @@
+{
+  "hash": "b6caea7f0033eca6a31f8936b919542a",
+  "result": {
+    "markdown": "---\ntitle: 4×4 数独的全部解\ncategory: R\ndate: \"2024-05-16\"\ndate-modified: \"2024-05-16\"\n---\n\n\n将0~15填入16宫格中，每行、每列、每条对角线以及每相邻4个数之和都是30\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(Rfast)\n```\n:::\n\n\n# 思路\n\n找出0~15的所有排列方式（共2.092279\\times 10^{13}种）\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
