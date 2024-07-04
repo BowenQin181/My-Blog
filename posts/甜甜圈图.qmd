@@ -1,0 +1,45 @@
+---
+title: 如何绘制在甜甜圈图中标上占比
+draft: true
+category: "ggplot2"
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+theme_set(hrbrthemes::theme_ipsum_rc())
+
+dt <- tibble(
+  type = sample(c("A", "B", "C", "D"), size = 100, replace = TRUE, prob = c(0.3, 0.4, 0.2, 0.1))
+)
+```
+
+甜甜圈图和扇形图常用来刻画各部分在整体中的占比，`ggplot2`的`coord_radial`绘制甜甜圈图非常方便。甜甜圈图中是通过角度来表示大小，而人眼不擅长比较角度的大小。从下面可以清楚的看出这一点：
+
+```{r}
+#| layout-ncol: 2
+#| label: fig-对比
+#| fig-cap: 甜甜圈图 vs 条形图
+#| fig-subcap: 
+#|   - 条形图
+#|   - 甜甜圈图
+dt %>% 
+  count(type) %>% 
+  mutate(prop = n / sum(n)) %>% 
+  ggplot(aes(x = type, y = prop, fill = type)) +
+  geom_col(show.legend = FALSE)
+
+dt %>% 
+  count(type) %>% 
+  mutate(prop = n / sum(n)) %>% 
+  ggplot(aes(y = factor(1), x = prop, fill = type)) +
+  geom_col() +
+  coord_radial(expand = FALSE, inner.radius = 0.3) +
+  theme_void()
+```
+
+@fig-对比-1 中可以从柱子的高度中看出A所占的比重大于B，@fig-对比-2 中则很难看出A和B谁占的比重大。
+
+所以甜甜圈图和扇形图需要加上注释，表明各部分的占比，而加注释是一个复杂的过程。
