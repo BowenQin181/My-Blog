@@ -1,0 +1,62 @@
+---
+title: "notes of Building reproducible analytical pipelines with R"
+categories: [R, notes]
+draft: true
+eval: false
+---
+
+# Part1: Don’t Repeat Yourself
+
+## Version control with Git
+
+### Git superbasics
+
+```{r}
+git init      # 初始化
+git status    # 查看状态
+git add <filename> # 将文件的更改添加到commit
+git add .          # 将所有文件的更改添加到commit
+
+git commit -m <message>  # 提交更改和信息
+git stash                # 隐藏某次更改
+git log                  # 查看commit的记录
+git revert <hash>        # 退回到某次commit
+```
+
+
+### Git and Github
+
+[建立和github的连接](https://raps-with-r.dev/git.html#git-and-github)
+
+
+## Collaborating using Trunk-based development
+
+### TBD basics
+
+```{r}
+git clone <ssh>  # 克隆仓库到本地
+git checkout -b <branch name> # 建立新的分支
+git checkout <branch name>    # 切换到分支
+git push origin <branch name> #  推送分支，然后再GitHub创建pull request
+
+```
+
+### Handling conflicts
+
+![](github_conflict_tbd.png)
+
+
+### Make sure you blame the right person
+
+```{r}
+git blame <file name>   # 查看文件的更改记录
+```
+
+
+## Literate programming
+
+### Keeping it DRY
+
+knit_child
+
+参数化报告

@@ -326,10 +326,10 @@ Figure&nbsp;3: 区间端点的位置
 <pre><code># A tibble: 4 × 5
   type      n  prop cum_prop   mid
   &lt;fct&gt; &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
-1 B        50  0.5      0.5   0.25
-2 C        12  0.12     0.62  0.56
-3 A        28  0.28     0.9   0.76
-4 D        10  0.1      1     0.95</code></pre>
+1 B        38  0.38     0.38  0.19
+2 C        16  0.16     0.54  0.46
+3 A        38  0.38     0.92  0.73
+4 D         8  0.08     1     0.96</code></pre>
 </div>
 </div>
 <p>最后将注释放在区间的中点即可。</p>
@@ -339,7 +339,7 @@ Figure&nbsp;3: 区间端点的位置
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> prop, <span class="at">x =</span> mid, <span class="at">y =</span> <span class="dv">1</span>), <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> mid, <span class="at">y =</span> <span class="fl">1.6</span>, <span class="at">label =</span> type)) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, ddd<span class="sc">$</span>cum_prop)) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, dt_plot<span class="sc">$</span>cum_prop)) <span class="sc">+</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_radial</span>(<span class="at">expand =</span> <span class="cn">FALSE</span>, <span class="at">inner.radius =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1075,7 +1075,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> prop, <span class="at">x =</span> mid, <span class="at">y =</span> <span class="dv">1</span>), <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
 <span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> mid, <span class="at">y =</span> <span class="fl">1.6</span>, <span class="at">label =</span> type)) <span class="sc">+</span></span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, ddd<span class="sc">$</span>cum_prop)) <span class="sc">+</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, dt_plot<span class="sc">$</span>cum_prop)) <span class="sc">+</span></span>
 <span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_radial</span>(<span class="at">expand =</span> <span class="cn">FALSE</span>, <span class="at">inner.radius =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
 <span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span>
 <span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>

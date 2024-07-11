@@ -1,0 +1,15 @@
+{
+  "hash": "04830ac15952651c4449bd8bea05f177",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"notes of Building reproducible analytical pipelines with R\"\ncategories: [R, notes]\ndraft: true\neval: false\n---\n\n\n# Part1: Don’t Repeat Yourself\n\n## Version control with Git\n\n### Git superbasics\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\ngit init      # 初始化\ngit status    # 查看状态\ngit add <filename> # 将文件的更改添加到commit\ngit add .          # 将所有文件的更改添加到commit\n\ngit commit -m <message>  # 提交更改和信息\ngit stash                # 隐藏某次更改\ngit log                  # 查看commit的记录\ngit revert <hash>        # 退回到某次commit\n```\n:::\n\n\n\n### Git and Github\n\n[建立和github的连接](https://raps-with-r.dev/git.html#git-and-github)\n\n\n## Collaborating using Trunk-based development\n\n### TBD basics\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\ngit clone <ssh>  # 克隆仓库到本地\ngit checkout -b <branch name> # 建立新的分支\ngit checkout <branch name>    # 切换到分支\ngit push origin <branch name> #  推送分支，然后再GitHub创建pull request\n```\n:::\n\n\n### Handling conflicts\n\n![](github_conflict_tbd.png)\n\n\n### Make sure you blame the right person\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\ngit blame <file name>   # 查看文件的更改记录\n```\n:::\n\n\n\n## Literate programming\n\n### Keeping it DRY\n\nknit_child\n\n参数化报告",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
