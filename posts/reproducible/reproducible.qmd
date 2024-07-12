@@ -1,7 +1,8 @@
 ---
 title: "notes of Building reproducible analytical pipelines with R"
 categories: [R, notes]
-draft: true
+number-depth: 5
+toc-depth: 4
 eval: false
 ---
 
@@ -57,6 +58,52 @@ git blame <file name>   # 查看文件的更改记录
 
 ### Keeping it DRY
 
-knit_child
+#### Generating R Markdown code from code
 
-参数化报告
+可以使用`knitr::knit_child()`批量生成文章内容。
+
+
+```{r eval=TRUE, message=FALSE}
+library(tidyverse)
+dt_penguins <- palmerpenguins::penguins 
+species <- unique(dt_penguins$species)
+```
+
+比如，想要针对`palmerpenguins::penguins`数据写一篇分析报告，文章一共三个章节，每个章节都包括一个`bill_length_mm`和`body_mass_g`的散点图，以及回归方程的表格，将以下内容写入`child.qmd`中
+
+`````{verbatim}
+##### Species: `r x`
+```{r eval=TRUE}
+df <- dt_penguins %>% 
+  filter(species == x) %>% 
+  drop_na()
+
+df %>% 
+  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE) +
+  ggtitle(str_glue("Species: {x}"))
+```
+
+```{r eval=TRUE}
+mod_lm <- lm(body_mass_g ~ bill_length_mm*sex, data = df)
+gtsummary::tbl_regression(mod_lm)
+```
+`````
+
+
+然后运行下面的代码（直接运行该代码框会报错，需要knit/render整个文档），就能生成章节：
+
+
+```{r eval=TRUE, results='asis'}
+res <- map(species,
+     \(x) knitr::knit_child("child/child.qmd",
+                            envir = environment(),
+                            quiet = TRUE))
+cat(unlist(res))
+```
+
+
+parametrized reports 也是类似的道理。
+
+

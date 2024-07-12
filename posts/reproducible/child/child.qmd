@@ -1,0 +1,33 @@
+---
+title: child
+freeze: true
+draft: true
+---
+
+##### Species: `r x`
+
+
+
+
+```{r eval=TRUE}
+df <- dt_penguins %>% 
+  filter(species == x) %>% 
+  drop_na()
+
+df %>% 
+  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE) +
+  ggtitle(str_glue("Species: {x}"))
+```
+
+
+
+```{r eval=TRUE}
+mod_lm <- lm(body_mass_g ~ bill_length_mm*sex, data = df)
+gtsummary::tbl_regression(mod_lm)
+```
+
+
+
+

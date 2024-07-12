@@ -1,0 +1,17 @@
+{
+  "hash": "24b86ec7e0013e96d828ee536d7112fb",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: child\nfreeze: true\ndraft: true\n---\n\n\n##### Species: \n\n\n\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\ndf <- dt_penguins %>% \n  filter(species == x) %>% \n  drop_na()\n\ndf %>% \n  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +\n  geom_point() +\n  geom_smooth(method = 'lm', se = FALSE) +\n  ggtitle(str_glue(\"Species: {x}\"))\n```\n:::\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nmod_lm <- lm(body_mass_g ~ bill_length_mm*sex, data = df)\ngtsummary::tbl_regression(mod_lm)\n```\n:::\n",
+    "supporting": [
+      "child_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
