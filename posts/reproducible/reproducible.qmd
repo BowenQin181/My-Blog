@@ -6,6 +6,7 @@ toc-depth: 4
 eval: false
 ---
 
+
 # Part1: Don’t Repeat Yourself
 
 ## Version control with Git
