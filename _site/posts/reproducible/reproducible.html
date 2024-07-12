@@ -265,29 +265,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="generating-r-markdown-code-from-code" class="level4" data-number="1.3.1.1">
 <h4 data-number="1.3.1.1" class="anchored" data-anchor-id="generating-r-markdown-code-from-code"><span class="header-section-number">1.3.1.1</span> Generating R Markdown code from code</h4>
 <p>可以使用<code>knitr::knit_child()</code>批量生成文章内容。</p>
-<p>比如，想要针对<code>palmerpenguins::penguins</code>数据写一篇分析报告，文章一共三个章节，每个章节都包括一个<code>bill_length_mm</code>和<code>body_mass_g</code>的散点图，以及回归方程的表格，将以下内容写入<code>child.qmd</code>中</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>##### Species: `r x`</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>```{r eval=TRUE}</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df &lt;- dt_penguins %&gt;% </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  filter(species == x) %&gt;% </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  drop_na()</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>df %&gt;% </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  geom_point() +</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  geom_smooth(method = 'lm', se = FALSE) +</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ggtitle(str_glue("Species: {x}"))</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>```</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>```{r eval=TRUE}</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>mod_lm &lt;- lm(body_mass_g ~ bill_length_mm*sex, data = df)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>gtsummary::tbl_regression(mod_lm)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>```</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dt_penguins <span class="ot">&lt;-</span> palmerpenguins<span class="sc">::</span>penguins </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">unique</span>(dt_penguins<span class="sc">$</span>species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(hrbrthemes<span class="sc">::</span><span class="fu">theme_ipsum_rc</span>())</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dt_penguins <span class="ot">&lt;-</span> palmerpenguins<span class="sc">::</span>penguins </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">unique</span>(dt_penguins<span class="sc">$</span>species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>比如，想要针对<code>palmerpenguins::penguins</code>数据写一篇分析报告，文章一共三个章节，每个章节都包括一个<code>bill_length_mm</code>和<code>body_mass_g</code>的散点图，以及回归方程的表格，将以下内容写入<code>child.qmd</code>中</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>##### Species: `r x`</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>```{r eval=TRUE}</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df &lt;- dt_penguins %&gt;% </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  filter(species == x) %&gt;% </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  drop_na()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>df %&gt;% </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  geom_point() +</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  geom_smooth(method = 'lm', se = FALSE) +</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ggtitle(str_glue("Species: {x}"))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>```</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>```{r eval=TRUE}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>mod_lm &lt;- lm(body_mass_g ~ bill_length_mm*sex, data = df)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>gtsummary::tbl_regression(mod_lm)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>```</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>然后运行下面的代码（直接运行该代码框会报错，需要knit/render整个文档），就能生成章节：</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">map</span>(species,</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>     \(x) knitr<span class="sc">::</span><span class="fu">knit_child</span>(<span class="st">"child/child.qmd"</span>,</span>
@@ -305,7 +307,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(bill_length_mm, body_mass_g, <span class="at">colour =</span> sex)) <span class="sc">+</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -321,23 +323,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> bill_length_mm<span class="sc">*</span>sex, <span class="at">data =</span> df)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(mod_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="dhtumrcswv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dhtumrcswv table {
+<div id="empjrdjowg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#empjrdjowg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dhtumrcswv thead, #dhtumrcswv tbody, #dhtumrcswv tfoot, #dhtumrcswv tr, #dhtumrcswv td, #dhtumrcswv th {
+#empjrdjowg thead, #empjrdjowg tbody, #empjrdjowg tfoot, #empjrdjowg tr, #empjrdjowg td, #empjrdjowg th {
   border-style: none;
 }
 
-#dhtumrcswv p {
+#empjrdjowg p {
   margin: 0;
   padding: 0;
 }
 
-#dhtumrcswv .gt_table {
+#empjrdjowg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -363,12 +365,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_caption {
+#empjrdjowg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dhtumrcswv .gt_title {
+#empjrdjowg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -380,7 +382,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#dhtumrcswv .gt_subtitle {
+#empjrdjowg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -392,7 +394,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#dhtumrcswv .gt_heading {
+#empjrdjowg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -404,13 +406,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_bottom_border {
+#empjrdjowg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_col_headings {
+#empjrdjowg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -425,7 +427,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_col_heading {
+#empjrdjowg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -445,7 +447,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dhtumrcswv .gt_column_spanner_outer {
+#empjrdjowg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -457,15 +459,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#dhtumrcswv .gt_column_spanner_outer:first-child {
+#empjrdjowg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dhtumrcswv .gt_column_spanner_outer:last-child {
+#empjrdjowg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dhtumrcswv .gt_column_spanner {
+#empjrdjowg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -477,11 +479,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#dhtumrcswv .gt_spanner_row {
+#empjrdjowg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dhtumrcswv .gt_group_heading {
+#empjrdjowg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -507,7 +509,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#dhtumrcswv .gt_empty_group_heading {
+#empjrdjowg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -522,15 +524,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#dhtumrcswv .gt_from_md > :first-child {
+#empjrdjowg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dhtumrcswv .gt_from_md > :last-child {
+#empjrdjowg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dhtumrcswv .gt_row {
+#empjrdjowg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -549,7 +551,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dhtumrcswv .gt_stub {
+#empjrdjowg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -562,7 +564,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dhtumrcswv .gt_stub_row_group {
+#empjrdjowg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -576,15 +578,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#dhtumrcswv .gt_row_group_first td {
+#empjrdjowg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dhtumrcswv .gt_row_group_first th {
+#empjrdjowg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dhtumrcswv .gt_summary_row {
+#empjrdjowg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -594,16 +596,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dhtumrcswv .gt_first_summary_row {
+#empjrdjowg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_first_summary_row.thick {
+#empjrdjowg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dhtumrcswv .gt_last_summary_row {
+#empjrdjowg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -613,7 +615,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_grand_summary_row {
+#empjrdjowg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -623,7 +625,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dhtumrcswv .gt_first_grand_summary_row {
+#empjrdjowg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -633,7 +635,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_last_grand_summary_row_top {
+#empjrdjowg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -643,11 +645,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_striped {
+#empjrdjowg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dhtumrcswv .gt_table_body {
+#empjrdjowg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -656,7 +658,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_footnotes {
+#empjrdjowg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -670,7 +672,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_footnote {
+#empjrdjowg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -679,7 +681,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dhtumrcswv .gt_sourcenotes {
+#empjrdjowg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -693,7 +695,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dhtumrcswv .gt_sourcenote {
+#empjrdjowg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -701,63 +703,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dhtumrcswv .gt_left {
+#empjrdjowg .gt_left {
   text-align: left;
 }
 
-#dhtumrcswv .gt_center {
+#empjrdjowg .gt_center {
   text-align: center;
 }
 
-#dhtumrcswv .gt_right {
+#empjrdjowg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dhtumrcswv .gt_font_normal {
+#empjrdjowg .gt_font_normal {
   font-weight: normal;
 }
 
-#dhtumrcswv .gt_font_bold {
+#empjrdjowg .gt_font_bold {
   font-weight: bold;
 }
 
-#dhtumrcswv .gt_font_italic {
+#empjrdjowg .gt_font_italic {
   font-style: italic;
 }
 
-#dhtumrcswv .gt_super {
+#empjrdjowg .gt_super {
   font-size: 65%;
 }
 
-#dhtumrcswv .gt_footnote_marks {
+#empjrdjowg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dhtumrcswv .gt_asterisk {
+#empjrdjowg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dhtumrcswv .gt_indent_1 {
+#empjrdjowg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dhtumrcswv .gt_indent_2 {
+#empjrdjowg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dhtumrcswv .gt_indent_3 {
+#empjrdjowg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dhtumrcswv .gt_indent_4 {
+#empjrdjowg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dhtumrcswv .gt_indent_5 {
+#empjrdjowg .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -844,7 +846,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(bill_length_mm, body_mass_g, <span class="at">colour =</span> sex)) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -860,23 +862,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mod_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> bill_length_mm<span class="sc">*</span>sex, <span class="at">data =</span> df)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(mod_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ybwdrwtobz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ybwdrwtobz table {
+<div id="wukfphbmia" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wukfphbmia table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ybwdrwtobz thead, #ybwdrwtobz tbody, #ybwdrwtobz tfoot, #ybwdrwtobz tr, #ybwdrwtobz td, #ybwdrwtobz th {
+#wukfphbmia thead, #wukfphbmia tbody, #wukfphbmia tfoot, #wukfphbmia tr, #wukfphbmia td, #wukfphbmia th {
   border-style: none;
 }
 
-#ybwdrwtobz p {
+#wukfphbmia p {
   margin: 0;
   padding: 0;
 }
 
-#ybwdrwtobz .gt_table {
+#wukfphbmia .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -902,12 +904,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_caption {
+#wukfphbmia .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ybwdrwtobz .gt_title {
+#wukfphbmia .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -919,7 +921,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ybwdrwtobz .gt_subtitle {
+#wukfphbmia .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -931,7 +933,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ybwdrwtobz .gt_heading {
+#wukfphbmia .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -943,13 +945,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_bottom_border {
+#wukfphbmia .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_col_headings {
+#wukfphbmia .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -964,7 +966,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_col_heading {
+#wukfphbmia .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -984,7 +986,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ybwdrwtobz .gt_column_spanner_outer {
+#wukfphbmia .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -996,15 +998,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ybwdrwtobz .gt_column_spanner_outer:first-child {
+#wukfphbmia .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ybwdrwtobz .gt_column_spanner_outer:last-child {
+#wukfphbmia .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ybwdrwtobz .gt_column_spanner {
+#wukfphbmia .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1016,11 +1018,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ybwdrwtobz .gt_spanner_row {
+#wukfphbmia .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ybwdrwtobz .gt_group_heading {
+#wukfphbmia .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1046,7 +1048,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ybwdrwtobz .gt_empty_group_heading {
+#wukfphbmia .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1061,15 +1063,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ybwdrwtobz .gt_from_md > :first-child {
+#wukfphbmia .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ybwdrwtobz .gt_from_md > :last-child {
+#wukfphbmia .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ybwdrwtobz .gt_row {
+#wukfphbmia .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1088,7 +1090,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ybwdrwtobz .gt_stub {
+#wukfphbmia .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1101,7 +1103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ybwdrwtobz .gt_stub_row_group {
+#wukfphbmia .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1115,15 +1117,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ybwdrwtobz .gt_row_group_first td {
+#wukfphbmia .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ybwdrwtobz .gt_row_group_first th {
+#wukfphbmia .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ybwdrwtobz .gt_summary_row {
+#wukfphbmia .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1133,16 +1135,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ybwdrwtobz .gt_first_summary_row {
+#wukfphbmia .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_first_summary_row.thick {
+#wukfphbmia .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ybwdrwtobz .gt_last_summary_row {
+#wukfphbmia .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1152,7 +1154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_grand_summary_row {
+#wukfphbmia .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1162,7 +1164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ybwdrwtobz .gt_first_grand_summary_row {
+#wukfphbmia .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1172,7 +1174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_last_grand_summary_row_top {
+#wukfphbmia .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1182,11 +1184,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_striped {
+#wukfphbmia .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ybwdrwtobz .gt_table_body {
+#wukfphbmia .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1195,7 +1197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_footnotes {
+#wukfphbmia .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1209,7 +1211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_footnote {
+#wukfphbmia .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1218,7 +1220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ybwdrwtobz .gt_sourcenotes {
+#wukfphbmia .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1232,7 +1234,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ybwdrwtobz .gt_sourcenote {
+#wukfphbmia .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1240,63 +1242,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ybwdrwtobz .gt_left {
+#wukfphbmia .gt_left {
   text-align: left;
 }
 
-#ybwdrwtobz .gt_center {
+#wukfphbmia .gt_center {
   text-align: center;
 }
 
-#ybwdrwtobz .gt_right {
+#wukfphbmia .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ybwdrwtobz .gt_font_normal {
+#wukfphbmia .gt_font_normal {
   font-weight: normal;
 }
 
-#ybwdrwtobz .gt_font_bold {
+#wukfphbmia .gt_font_bold {
   font-weight: bold;
 }
 
-#ybwdrwtobz .gt_font_italic {
+#wukfphbmia .gt_font_italic {
   font-style: italic;
 }
 
-#ybwdrwtobz .gt_super {
+#wukfphbmia .gt_super {
   font-size: 65%;
 }
 
-#ybwdrwtobz .gt_footnote_marks {
+#wukfphbmia .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ybwdrwtobz .gt_asterisk {
+#wukfphbmia .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ybwdrwtobz .gt_indent_1 {
+#wukfphbmia .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ybwdrwtobz .gt_indent_2 {
+#wukfphbmia .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ybwdrwtobz .gt_indent_3 {
+#wukfphbmia .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ybwdrwtobz .gt_indent_4 {
+#wukfphbmia .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ybwdrwtobz .gt_indent_5 {
+#wukfphbmia .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1383,7 +1385,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(bill_length_mm, body_mass_g, <span class="at">colour =</span> sex)) <span class="sc">+</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="fu">str_glue</span>(<span class="st">"Species: {x}"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -1399,23 +1401,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> bill_length_mm<span class="sc">*</span>sex, <span class="at">data =</span> df)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>gtsummary<span class="sc">::</span><span class="fu">tbl_regression</span>(mod_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ehxibckzer" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ehxibckzer table {
+<div id="fnmpdgleeo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fnmpdgleeo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ehxibckzer thead, #ehxibckzer tbody, #ehxibckzer tfoot, #ehxibckzer tr, #ehxibckzer td, #ehxibckzer th {
+#fnmpdgleeo thead, #fnmpdgleeo tbody, #fnmpdgleeo tfoot, #fnmpdgleeo tr, #fnmpdgleeo td, #fnmpdgleeo th {
   border-style: none;
 }
 
-#ehxibckzer p {
+#fnmpdgleeo p {
   margin: 0;
   padding: 0;
 }
 
-#ehxibckzer .gt_table {
+#fnmpdgleeo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1441,12 +1443,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_caption {
+#fnmpdgleeo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ehxibckzer .gt_title {
+#fnmpdgleeo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1458,7 +1460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ehxibckzer .gt_subtitle {
+#fnmpdgleeo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1470,7 +1472,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ehxibckzer .gt_heading {
+#fnmpdgleeo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1482,13 +1484,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_bottom_border {
+#fnmpdgleeo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_col_headings {
+#fnmpdgleeo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1503,7 +1505,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_col_heading {
+#fnmpdgleeo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1523,7 +1525,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ehxibckzer .gt_column_spanner_outer {
+#fnmpdgleeo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1535,15 +1537,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ehxibckzer .gt_column_spanner_outer:first-child {
+#fnmpdgleeo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ehxibckzer .gt_column_spanner_outer:last-child {
+#fnmpdgleeo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ehxibckzer .gt_column_spanner {
+#fnmpdgleeo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1555,11 +1557,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ehxibckzer .gt_spanner_row {
+#fnmpdgleeo .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ehxibckzer .gt_group_heading {
+#fnmpdgleeo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1585,7 +1587,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ehxibckzer .gt_empty_group_heading {
+#fnmpdgleeo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1600,15 +1602,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ehxibckzer .gt_from_md > :first-child {
+#fnmpdgleeo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ehxibckzer .gt_from_md > :last-child {
+#fnmpdgleeo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ehxibckzer .gt_row {
+#fnmpdgleeo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1627,7 +1629,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ehxibckzer .gt_stub {
+#fnmpdgleeo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1640,7 +1642,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ehxibckzer .gt_stub_row_group {
+#fnmpdgleeo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1654,15 +1656,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ehxibckzer .gt_row_group_first td {
+#fnmpdgleeo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ehxibckzer .gt_row_group_first th {
+#fnmpdgleeo .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ehxibckzer .gt_summary_row {
+#fnmpdgleeo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1672,16 +1674,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ehxibckzer .gt_first_summary_row {
+#fnmpdgleeo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_first_summary_row.thick {
+#fnmpdgleeo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ehxibckzer .gt_last_summary_row {
+#fnmpdgleeo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1691,7 +1693,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_grand_summary_row {
+#fnmpdgleeo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1701,7 +1703,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ehxibckzer .gt_first_grand_summary_row {
+#fnmpdgleeo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1711,7 +1713,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_last_grand_summary_row_top {
+#fnmpdgleeo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1721,11 +1723,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_striped {
+#fnmpdgleeo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ehxibckzer .gt_table_body {
+#fnmpdgleeo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1734,7 +1736,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_footnotes {
+#fnmpdgleeo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1748,7 +1750,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_footnote {
+#fnmpdgleeo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1757,7 +1759,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ehxibckzer .gt_sourcenotes {
+#fnmpdgleeo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1771,7 +1773,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ehxibckzer .gt_sourcenote {
+#fnmpdgleeo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1779,63 +1781,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ehxibckzer .gt_left {
+#fnmpdgleeo .gt_left {
   text-align: left;
 }
 
-#ehxibckzer .gt_center {
+#fnmpdgleeo .gt_center {
   text-align: center;
 }
 
-#ehxibckzer .gt_right {
+#fnmpdgleeo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ehxibckzer .gt_font_normal {
+#fnmpdgleeo .gt_font_normal {
   font-weight: normal;
 }
 
-#ehxibckzer .gt_font_bold {
+#fnmpdgleeo .gt_font_bold {
   font-weight: bold;
 }
 
-#ehxibckzer .gt_font_italic {
+#fnmpdgleeo .gt_font_italic {
   font-style: italic;
 }
 
-#ehxibckzer .gt_super {
+#fnmpdgleeo .gt_super {
   font-size: 65%;
 }
 
-#ehxibckzer .gt_footnote_marks {
+#fnmpdgleeo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ehxibckzer .gt_asterisk {
+#fnmpdgleeo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ehxibckzer .gt_indent_1 {
+#fnmpdgleeo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ehxibckzer .gt_indent_2 {
+#fnmpdgleeo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ehxibckzer .gt_indent_3 {
+#fnmpdgleeo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ehxibckzer .gt_indent_4 {
+#fnmpdgleeo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ehxibckzer .gt_indent_5 {
+#fnmpdgleeo .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1912,6 +1914,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </div>
+<p>parametrized reports 也是类似的道理。</p>
 
 
 <!-- -->
@@ -2598,47 +2601,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE, message=FALSE}</span></span>
 <span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="in">dt_penguins &lt;- palmerpenguins::penguins </span></span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="in">species &lt;- unique(dt_penguins$species)</span></span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>比如，想要针对<span class="in">`palmerpenguins::penguins`</span>数据写一篇分析报告，文章一共三个章节，每个章节都包括一个<span class="in">`bill_length_mm`</span>和<span class="in">`body_mass_g`</span>的散点图，以及回归方程的表格，将以下内容写入<span class="in">`child.qmd`</span>中</span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a><span class="in">`````{verbatim}</span></span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="in">##### Species: `r x`</span></span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE}</span></span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="in">df &lt;- dt_penguins %&gt;% </span></span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(species == x) %&gt;% </span></span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="in">  drop_na()</span></span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="in">df %&gt;% </span></span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +</span></span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point() +</span></span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method = 'lm', se = FALSE) +</span></span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="in">  ggtitle(str_glue("Species: {x}"))</span></span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE}</span></span>
-<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a><span class="in">mod_lm &lt;- lm(body_mass_g ~ bill_length_mm*sex, data = df)</span></span>
-<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="in">gtsummary::tbl_regression(mod_lm)</span></span>
-<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="in">`````</span></span>
-<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a><span class="in">theme_set(hrbrthemes::theme_ipsum_rc())</span></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="in">dt_penguins &lt;- palmerpenguins::penguins </span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="in">species &lt;- unique(dt_penguins$species)</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>比如，想要针对<span class="in">`palmerpenguins::penguins`</span>数据写一篇分析报告，文章一共三个章节，每个章节都包括一个<span class="in">`bill_length_mm`</span>和<span class="in">`body_mass_g`</span>的散点图，以及回归方程的表格，将以下内容写入<span class="in">`child.qmd`</span>中</span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="in">`````{verbatim}</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="in">##### Species: `r x`</span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE}</span></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="in">df &lt;- dt_penguins %&gt;% </span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(species == x) %&gt;% </span></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a><span class="in">  drop_na()</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a><span class="in">df %&gt;% </span></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +</span></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point() +</span></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_smooth(method = 'lm', se = FALSE) +</span></span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="in">  ggtitle(str_glue("Species: {x}"))</span></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE}</span></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="in">mod_lm &lt;- lm(body_mass_g ~ bill_length_mm*sex, data = df)</span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="in">gtsummary::tbl_regression(mod_lm)</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="in">`````</span></span>
 <span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>然后运行下面的代码（直接运行该代码框会报错，需要knit/render整个文档），就能生成章节：</span>
-<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>然后运行下面的代码（直接运行该代码框会报错，需要knit/render整个文档），就能生成章节：</span>
 <span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE, results='asis'}</span></span>
-<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="in">res &lt;- map(species,</span></span>
-<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">     \(x) knitr::knit_child("child/child.qmd",</span></span>
-<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">                            envir = environment(),</span></span>
-<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="in">                            quiet = TRUE))</span></span>
-<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="in">cat(unlist(res))</span></span>
-<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r eval=TRUE, results='asis'}</span></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">res &lt;- map(species,</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">     \(x) knitr::knit_child("child/child.qmd",</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="in">                            envir = environment(),</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="in">                            quiet = TRUE))</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="in">cat(unlist(res))</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>parametrized reports 也是类似的道理。</span>
-<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a>parametrized reports 也是类似的道理。</span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

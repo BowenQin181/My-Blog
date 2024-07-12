@@ -18,8 +18,7 @@ df %>%
   ggplot(aes(bill_length_mm, body_mass_g, colour = sex)) +
   geom_point() +
   geom_smooth(method = 'lm', se = FALSE) +
-  ggtitle(str_glue("Species: {x}")) +
-  hrbrthemes::theme_ipsum_rc()
+  ggtitle(str_glue("Species: {x}")) 
 ```
 
 

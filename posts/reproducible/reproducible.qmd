@@ -66,6 +66,7 @@ git blame <file name>   # 查看文件的更改记录
 
 ```{r eval=TRUE, message=FALSE}
 library(tidyverse)
+theme_set(hrbrthemes::theme_ipsum_rc())
 dt_penguins <- palmerpenguins::penguins 
 species <- unique(dt_penguins$species)
 ```
