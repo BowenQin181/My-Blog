@@ -1,5 +1,5 @@
 ---
-title: "notes of Building reproducible analytical pipelines with R"
+title: "Learning Notes from ***Building Reproducible Analytical Pipelines with R***"
 categories: [R, notes]
 number-depth: 5
 toc-depth: 4
