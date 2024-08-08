@@ -1,0 +1,127 @@
+---
+title: 构造感知机模型
+categories: [R, ML]
+date: "2024-03-05"
+---
+
+动手实现感知机模型
+
+## PLA
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+theme_set(theme_minimal())
+knitr::opts_chunk$set(
+  out.width = "80%",
+  fig.align = "center",
+  dev = "ragg_png"
+)
+```
+
+
+生成线性可分的数据
+
+```{r}
+set.seed(123)
+n = 2000
+df <- tibble(
+  id = 1:n,
+  x1 = rnorm(n),
+  x2 = rnorm(n),
+  y = if_else(2*x1 + 3*x2 >= 0, "A", "B")
+) %>% 
+  arrange(id)
+df
+```
+
+```{r}
+df %>% 
+  ggplot(aes(x1, x2, color = as_factor(y))) +
+  geom_point(alpha = 0.5) +
+  labs(
+    x = latex2exp::TeX("$x_1$"),
+    y = latex2exp::TeX("$x_2$"),
+    color = "y"
+  ) +
+  scale_color_brewer(palette = "Set2")
+```
+
+
+```{r}
+ml_pla <- function(data, formula, max_time, W = 1) {
+  time <- 0 # 记录运行了几次
+  model_frame <- model.frame(formula, data)
+
+  # 查看Y的分类
+  Y_class <- model.response(model_frame) %>%
+    unique()
+  Y_class_to_number <- c(1, -1)
+  names(Y_class_to_number) <- Y_class
+
+
+  X_matrix <- model.matrix(formula, model_frame)
+  X_ncol <- ncol(X_matrix)
+  W <- rep(W, X_ncol)
+
+  n_errors <- 11111 # 设置一个初始的错误数量，触发下面的条件
+  log_errors <- c() # 记录错误数量
+
+
+
+  while (n_errors > 0 && time < max_time) {
+    # 生成Y的预测值
+    Y_pred <- if_else(sign(X_matrix %*% W) == 1,
+      Y_class[[1]],
+      Y_class[[2]]
+    )
+    
+    # 筛选出分类不正确的数据
+    errors_dt <- model_frame[Y_pred != model_frame[, 1], ]
+    n_errors <- nrow(errors_dt)
+    log_errors <- c(log_errors, n_errors) # 记录错误的数据有多少
+    time <- time + 1
+
+
+    # 有错误就更新W
+    if (n_errors > 0) {
+      # 随机选出一个错误的点
+      errors_sample_id <- rownames(errors_dt) %>%
+        sample(size = 1)
+      x <- X_matrix[errors_sample_id, ]
+      y <- model_frame[errors_sample_id, 1] %>%
+        as.character() %>%
+        Y_class_to_number[.]
+      
+      # 更新W
+      W <- W + y * x
+    } 
+  }
+
+  return(list(
+    pred = Y_pred,
+    "W" = W,
+    time = time,
+    log_errors = log_errors
+  ))
+}
+```
+
+
+看一下效果
+
+```{r}
+pla <- ml_pla(df, y ~ x1 + x2, max_time = 10000)
+str(pla)
+```
+
+```{r}
+df %>% 
+  bind_cols(pred = pla$pred) %>% 
+  filter(y != pred)
+```
+
+
+
